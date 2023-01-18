@@ -16,7 +16,35 @@ const MyBook = () => {
     return response.data.data
   })
 
-  console.log(transUser, "ini transaction")
+  const handleDownloadFile = (fileURL) => {
+    fetch(fileURL, {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/pdf',
+        },
+    })
+    .then((response) => response.blob())
+    .then((response) => {
+    
+    const url = window.URL.createObjectURL(new Blob([response]),);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute(
+    'download',
+    `FileName.pdf`,
+    );
+
+    // Append to html link element page
+    document.body.appendChild(link);
+
+    // Start download
+    link.click();
+
+    // Clean up and remove the link
+    link.parentNode.removeChild(link);
+    });
+}
+
   return (
     <>
       <Container className="mt-5">
@@ -34,7 +62,7 @@ const MyBook = () => {
                         <span className="text-secondary">
                           By. {a.book.author}
                         </span>
-                        <Button variant="dark" className="w-100 mt-3 mb-4">
+                        <Button variant="dark" className="w-100 mt-3 mb-4" onClick={() => handleDownloadFile(a.book.filePDF)}>
                           Download
                         </Button>
                       </Col>
